@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {FormControl} from "@angular/forms";
+import {lengthSystem} from "./units/unitsSystems/length";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'PlayGround';
+
+  form = new FormControl();
+
+  lengthUnitSystem = lengthSystem;
+
+  selectedUnit = new FormControl('meter');
+
+  constructor() {
+  }
+
+  selectUnit(event: Event) {
+    // @ts-ignore
+    this.selectedUnit.setValue(event.target.value);
+  }
+
 }
