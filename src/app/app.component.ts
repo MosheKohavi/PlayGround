@@ -1,26 +1,46 @@
-import { Component } from '@angular/core';
-import {FormControl} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {lengthSystem} from "./units/unitsSystems/length";
+import {projectionsSystem} from "./units/unitsSystems/projections";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  form = new FormControl();
+  lengthForm = new FormControl();
 
   lengthUnitSystem = lengthSystem;
 
-  selectedUnit = new FormControl('meter');
+  selectedLengthUnit = new FormControl('meter');
 
-  constructor() {
+  coordsForm = this.formBuilder.group({
+    lat: ['', Validators.required],
+    lng: ['', Validators.required]
+  });
+
+  projectionUnitSystem = projectionsSystem;
+
+  selectedProjUnit = new FormControl('WGS84');
+
+  constructor(
+    private formBuilder: FormBuilder
+  ) {
   }
 
-  selectUnit(event: Event) {
+  ngOnInit() {
+  }
+
+  selectLengthUnit(event: Event) {
     // @ts-ignore
-    this.selectedUnit.setValue(event.target.value);
+    this.selectedLengthUnit.setValue(event.target.value);
+  }
+
+  selectProjUnit(event: Event) {
+    // @ts-ignore
+    this.selectedProjUnit.setValue(event.target.value);
   }
 
 }

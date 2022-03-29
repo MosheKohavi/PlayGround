@@ -6,7 +6,7 @@ import {UnitConverterPipe} from "../pipes/unit.pipe";
 /**
  * First, define the units names as a type
  */
-type LengthUnits = 'meter' | 'centimeter' | 'inch';
+export type LengthUnits = 'meter' | 'centimeter' | 'inch';
 
 /**
  * For each unit name, define its properties and the conversion functions from/to the standard unit.

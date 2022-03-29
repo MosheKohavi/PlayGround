@@ -3,17 +3,20 @@ import {CommonModule} from '@angular/common';
 import {FormUnitConverterDirective} from './directives/form-unit-converter.directive';
 import {lengthSystem, LengthUnitPipe} from "./unitsSystems/length";
 import { UnitPipe } from './pipes/unit.pipe';
+import {ProjUnitPipe} from "./unitsSystems/projections";
 
 
 @NgModule({
   declarations: [
     FormUnitConverterDirective,
+    UnitPipe,
     LengthUnitPipe,
-    UnitPipe
+    ProjUnitPipe
   ],
   exports: [
     FormUnitConverterDirective,
-    LengthUnitPipe
+    LengthUnitPipe,
+    ProjUnitPipe
   ],
   imports: [
     CommonModule

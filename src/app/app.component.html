@@ -3,7 +3,7 @@
   <div style="padding: 1em">
 
     <h4>Select unit</h4>
-    <form (change)="selectUnit($event)">
+    <form (change)="selectLengthUnit($event)">
       <div *ngFor="let unit of lengthUnitSystem | keyvalue">
         <input type="radio" name="unit" [id]="unit.key" [value]="unit.key" [checked]="!unit.value.converters">
         <label [for]="unit.key">{{unit.value.title}}</label>
@@ -13,22 +13,53 @@
     <p>This input has a form control with "formUnitConverter" directive</p>
     <input
       type="number"
-      [formControl]="form"
+      [formControl]="lengthForm"
       [appFormUnitConverter]="lengthUnitSystem"
-      [unitName]="selectedUnit.value"
+      [unitName]="selectedLengthUnit.value"
     >
 
     <h3>
       The form's "real" value stays always with standard unit:<br>
-      <span style="color: darkred">{{form.value ?? 'undefined'}}</span>
+      <span style="color: darkred">{{lengthForm.value ?? 'undefined'}}</span>
     </h3>
 
     <h3>
       The value to show through the unit pipe:<br>
-      <span style="color: darkgreen">{{form.value | lengthUnit : selectedUnit.value}}</span>
+      <span style="color: darkgreen">{{lengthForm.value | lengthUnit : selectedLengthUnit.value}}</span>
     </h3>
 
   </div>
 
+  <div style="padding: 1em">
+
+    <h4>Select unit</h4>
+    <form (change)="selectProjUnit($event)">
+      <div *ngFor="let unit of projectionUnitSystem | keyvalue">
+        <input type="radio" name="unit" [id]="unit.key" [value]="unit.key" [checked]="!unit.value.converters">
+        <label [for]="unit.key">{{unit.value.title}}</label>
+      </div>
+    </form>
+
+    <p>This input has a form control with "formUnitConverter" directive</p>
+    <div
+      [formGroup]="coordsForm"
+      [appFormUnitConverter]="projectionUnitSystem"
+      [unitName]="selectedProjUnit.value"
+    >
+      <input type="number" formControlName="lat">
+      <input type="number" formControlName="lng">
+    </div>
+
+    <h3>
+      The form's "real" value stays always with standard unit:<br>
+      <span style="color: darkred">{{coordsForm.value | json}}</span>
+    </h3>
+
+    <h3>
+      The value to show through the unit pipe:<br>
+      <span style="color: darkgreen">{{coordsForm.value | projUnit : selectedProjUnit.value}}</span>
+    </h3>
+
+  </div>
 
 </router-outlet>

@@ -32,7 +32,7 @@ export function factorConverters(factor: number, maxDecimals?: number): UnitConv
  */
 export interface Unit<T> {
   title: string;
-  symbol: string;
+  symbol?: string;
   converters?: UnitConverters<T>;
 }
 
