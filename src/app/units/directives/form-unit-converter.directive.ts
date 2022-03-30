@@ -41,7 +41,11 @@ export class FormUnitConverterDirective<N extends string> implements OnInit, OnC
    */
   @Output() conversionError = new EventEmitter<any>();
 
-  private _sub?: Subscription;
+  /**
+   * The subscription of the form's value
+   * @private
+   */
+  private _inputSub?: Subscription;
 
   /**
    * The selected unit. If not supplied, or not exist
@@ -77,17 +81,18 @@ export class FormUnitConverterDirective<N extends string> implements OnInit, OnC
    * Start subscribing the forms value, and convert the form's values into the standard unit by keeping the input's view.
    */
   ngOnInit() {
-    this._sub = this.control.valueChanges.pipe(
+    this._inputSub = this.control.valueChanges.pipe(
       filter((v, i) => i % 2 === 0),
       startWith(this.control.value),
     ).subscribe(v => {
       try {
         const stdValue = this.unit.converters?.toStd(v) ?? v;
-        this.setCtrlValue(this.control, stdValue, 'model');
+        this.setCtrlValue(this.control, stdValue, 'model'); // <- This programmatic value change will be ignored by the filter
       } catch (e) {
         this.conversionError.emit(e);
+        this.control.updateValueAndValidity();
       }
-    })
+    });
   }
 
   /**
@@ -110,31 +115,37 @@ export class FormUnitConverterDirective<N extends string> implements OnInit, OnC
    * Stop form's value subscription
    */
   ngOnDestroy() {
-    this._sub?.unsubscribe();
+    this._inputSub?.unsubscribe();
   }
 
   /**
    * Set the given value on the given control, for the model only or for the view only.
-   * For a control group, set each sub control individually (1 level down), and emit event only at the end.
+   * For a control group/array, set each form control individually and recursively, and emit event only at the end.
+   * It must be done that way because separation of model-value does not work well when setting value for the whole form.
    * @param ctrl
    * @param value
    * @param viewOrModel Change only the view or model of the control by keeping the other's value
+   * @param _isMainForm In inner calls will be set to false
    * @private
    */
-  private setCtrlValue(ctrl: AbstractControl, value: any, viewOrModel: 'view' | 'model') {
+  private setCtrlValue(ctrl: AbstractControl, value: any, viewOrModel: 'view' | 'model', _isMainForm: boolean = true) {
     const isGrouped = this.hasSubForms(ctrl);
     const emitValueOptions = {
       emitModelToViewChange: viewOrModel === 'view',
       emitViewToModelChange: viewOrModel === 'model',
-      emitEvent: !isGrouped,
+      emitEvent: false,
     }
     if (isGrouped) {
-      Object.keys(ctrl.controls).forEach(k => {
-        ctrl.controls[k].setValue(value[k], emitValueOptions);
+      Object.entries(ctrl.controls).forEach(([k, innerCtrl]) => {
+        const innerValue = value?.[k];
+        this.setCtrlValue(innerCtrl, innerValue, viewOrModel, false);
       });
-      ctrl.updateValueAndValidity();
     } else {
       ctrl.setValue(value, emitValueOptions);
+    }
+    // Emit the event only after the recursion was done
+    if (_isMainForm) {
+      ctrl.updateValueAndValidity();
     }
   }
 

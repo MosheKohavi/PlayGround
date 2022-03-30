@@ -1,4 +1,22 @@
 /**
+ * A unit definition, containing the converters from and to the standard unit.
+ * The standard unit itself does not need to include the converters field.
+ */
+export interface Unit<T> {
+  title: string;
+  symbol?: string;
+  converters?: UnitConverters<T>;
+}
+
+/**
+ * A units' system is a map of units.
+ * The object keys should include the names of the units
+ */
+export type UnitsSystem<N extends string, T> = {
+  [Key in N]: Unit<T>;
+}
+
+/**
  * Dual converters: from standard unit to the requested unit and vise versa.
  */
 export interface UnitConverters<T> {
@@ -19,24 +37,6 @@ export function factorConverters(factor: number, decimals?: number): UnitConvert
     },
     toStd: value => value / factor,
   }
-}
-
-/**
- * A unit definition, containing the converters from and to the standard unit.
- * The standard unit itself does not need to include the converters field.
- */
-export interface Unit<T> {
-  title: string;
-  symbol?: string;
-  converters?: UnitConverters<T>;
-}
-
-/**
- * A units' system is a map of units.
- * The object keys should include the names of the units
- */
-export type UnitsSystem<N extends string, T> = {
-  [Key in N]: Unit<T>;
 }
 
 /**

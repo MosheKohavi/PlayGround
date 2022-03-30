@@ -1,5 +1,3 @@
-// npm install transform-coordinates
-
 import {UnitsSystem} from "../models";
 import {Pipe} from "@angular/core";
 import {UnitConverterPipe} from "../pipes/unit.pipe";
