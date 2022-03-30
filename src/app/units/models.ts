@@ -9,18 +9,13 @@ export interface UnitConverters<T> {
 /**
  * A utility function for building a commonly used numeric converters using a factor
  * @param factor
- * @param maxDecimals limit the number of digits after the decimal dot for the unit
+ * @param decimals the number of digits after the decimal dot for the unit
  */
-export function factorConverters(factor: number, maxDecimals?: number): UnitConverters<number> {
+export function factorConverters(factor: number, decimals?: number): UnitConverters<number> {
   return {
     fromStd: value => {
-      const fromSrdValue = value * factor;
-      if (maxDecimals) {
-        const order = 10 ^ maxDecimals;
-        return Math.round(fromSrdValue * order) / order;
-      } else {
-        return fromSrdValue;
-      }
+      const v = value * factor;
+      return decimals ? +v.toFixed(decimals) : v;
     },
     toStd: value => value / factor,
   }

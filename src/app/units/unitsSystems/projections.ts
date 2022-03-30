@@ -28,11 +28,11 @@ export const projectionsSystem: UnitsSystem<Projections, AppCoords> = {
     converters: {
       fromStd: value => {
         const res = proj4.transform(proj4.WGS84, greekProjection, [value?.lng || 0, value?.lat || 0]);
-        return {lng: res.x, lat: res.y};
+        return {lng: +res.x.toFixed(5), lat: +res.y.toFixed(5)};
       },
       toStd: value => {
         const res = proj4.transform(greekProjection, proj4.WGS84, [value?.lng || 0, value?.lat || 0]);
-        return {lng: res.x, lat: res.y};
+        return {lng: +res.x.toFixed(5), lat: +res.y.toFixed(5)};
       }
     }
   }
@@ -48,8 +48,12 @@ export class ProjUnitPipe extends UnitConverterPipe<Projections, AppCoords> {
   }
 
   override transform(value: AppCoords, unit: Projections): string {
-    const newValue = super.transform(value, unit) as AppCoords;
-    return newValue ? [newValue.lat, newValue.lng].join(', ') : '';
+    try {
+      const newValue = super.transform(value, unit) as AppCoords;
+      return newValue ? [newValue.lat, newValue.lng].join(', ') : '';
+    } catch (e) {
+      return 'Invalid coordinates';
+    }
   }
 
 }
